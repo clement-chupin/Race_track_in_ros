@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mobile_robot">
+
+  <xacro:property name="package_name" value="circuit"/>
+  <xacro:property name="robot_name" value="mobile_robot"/>
+
+  <xacro:include filename="$(find ${package_name})/src/urdf/include/common_macros.urdf.xacro" />
+
+  <!-- <xacro:set_package_name /> -->
+
+  <xacro:property name="back_wheel_yaml" value="$(find ${package_name})/src/config/${robot_name}/back_wheel.yaml" />
+  <xacro:property name="back_wheel_props" value="${load_yaml(back_wheel_yaml)}"/>
+
+  <xacro:property name="front_wheel_yaml" value="$(find ${package_name})/src/config/${robot_name}/front_wheel.yaml" />
+  <xacro:property name="front_wheel_props" value="${load_yaml(front_wheel_yaml)}"/>
+
+  <xacro:property name="base_yaml" value="$(find ${package_name})/src/config/${robot_name}/base.yaml" />
+  <xacro:property name="base_props" value="${load_yaml(base_yaml)}"/>
+  
+  <!-- Base link -->
+  <xacro:base base_prop="${base_props}" >
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:base> 
+  <!-- Back Wheels -->
+  <xacro:wheel prefix="back_right" reflect="-1"
+                      wheel_props="${back_wheel_props}"
+                      wheel_color="$(arg wheel_color)"
+                      base_props="${base_props}"
+                      >                    
+  </xacro:wheel>
+
+  <xacro:wheel prefix="back_left" reflect="1"
+                      wheel_props="${back_wheel_props}"
+                      wheel_color="$(arg wheel_color)"
+                      base_props="${base_props}"
+                      >
+  </xacro:wheel>
+
+  <xacro:wheel prefix="front_right" reflect="-1" 
+                      wheel_props="${front_wheel_props}"
+                      wheel_color="$(arg wheel_color)"
+                      base_props="${base_props}"
+                      > 
+  </xacro:wheel>
+
+  <xacro:wheel prefix="front_left" reflect="1" 
+                      wheel_props="${front_wheel_props}"
+                      wheel_color="$(arg wheel_color)"
+                      base_props="${base_props}"
+                      >
+  </xacro:wheel>
+
+ <xacro:sensor prefix="left" robot_index="$(arg robot_index)" sensor_x="0" sensor_y="-0.2" sensor_rotate="-1.5708"/> 
+ <xacro:sensor prefix="right" robot_index="$(arg robot_index)" sensor_x="0" sensor_y="0.2" sensor_rotate="1.5708"/> 
+ <xacro:sensor prefix="front" robot_index="$(arg robot_index)" sensor_x="0.2" sensor_y="0" sensor_rotate="0"/> 
+
+<!--  <xacro:sensor prefix="right" sensor_y="-0.5" sensor_rotate="3.1415"/> 
+-->
+<xacro:camera robot_index="$(arg robot_index)" cam_height="0.2" cam_rot_y="0.1"/>
+  
+<gazebo>
+  <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+    <updateRate>10.0</updateRate>
+    <robotNamespace>/robot_$(arg robot_index)</robotNamespace>
+    <leftFrontJoint>front_left_wheel_joint</leftFrontJoint>
+    <rightFrontJoint>front_right_wheel_joint</rightFrontJoint>
+    <leftRearJoint>back_left_wheel_joint</leftRearJoint>
+    <rightRearJoint>back_right_wheel_joint</rightRearJoint>
+    <wheelSeparation>0.5</wheelSeparation>
+    <wheelDiameter>0.053</wheelDiameter>
+    <robotBaseFrame>base_link</robotBaseFrame>
+    <torque>10</torque>
+    <topicName>cmd_vel</topicName>
+    <broadcastTF>false</broadcastTF>
+  </plugin>
+</gazebo> 
+
+  <gazebo reference="sensor_link">
+    <sensor type="camera" name="camera1">
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>

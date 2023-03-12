@@ -1,0 +1,231 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="race_track">
+
+
+
+<!-- <xacro:include filename="$(find circuit)/src/urdf/race_track.gazebo" /> -->
+
+<!-- <xacro:property name="race_track_yaml" value="$(find ${package_name})/src/config/race_track/race_track.yaml" />
+<xacro:property name="race_track_props" value="${load_yaml(race_track_yaml)}"/> -->
+
+
+
+<link name="race_track_link">
+
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+      <mesh filename="package://circuit/src/urdf/meshes/track_map.stl" scale="1 1 1"/>
+      </geometry>
+    </collision>
+    <visual>
+
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+      <mesh filename="package://circuit/src/urdf/meshes/circuit_visual.dae" scale="1 1 1">
+      </mesh>
+        <!-- <box size="1 1 1"/> -->
+      </geometry>
+
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+</link>
+<link name="world">
+
+<inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+
+  </link>
+
+  <joint name="fixed" type="fixed">
+    <parent link="world"/>
+    <child link="race_track_link"/>
+  </joint>
+
+
+  <!-- <link name="door">
+    <origin xyz="0 0 2" rpy="0 0 0"/>
+    <collision>
+      <origin xyz="0 0 1" rpy="0 0 0"/>
+      <geometry>
+    <box size="1 0.5 0.5"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 1" rpy="0 0 0"/>
+      <geometry>
+    <box size="1 0.5 0.5"/>
+      </geometry>
+      <material name="Red">
+         <color rgba="1.0 0.0 0.0 1.0"/>
+        </material>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 1" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+    
+  </link>
+
+
+    <joint name="door_joint" type="continuous">
+      <axis xyz="0 0 1" rpy="0 0 0" />
+      <parent link="race_track_link"/>
+      <child link="door"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <dynamics damping="0.7"/>
+    </joint> -->
+
+
+  <link name="screen_score">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="0.5 0.5 0.1"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="0.5 0.5 0.1"/>
+      </geometry>
+      <material name="Red">
+         <color rgba="1.0 0.0 0.0 1.0"/>
+        </material>
+    </visual>
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+
+    <joint name="screen_joint" type="fixed">
+      <parent link="race_track_link"/>
+      <child link="screen_score"/>
+      <origin xyz="2 1.8 1" rpy="1.57 0 -1.57"/>
+    </joint>
+
+  <!-- <transmission name="tran2">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="door_joint">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor2">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>  -->
+
+
+<gazebo reference="screen_score">
+  <visual>
+    <plugin name="display_video_controller" filename="libgazebo_ros_video.so">
+      <topicName>image_panel</topicName>
+      <height>512</height>
+      <width>512</width>
+    </plugin>
+  </visual>
+</gazebo>
+
+
+
+  <link name="camera_finish">
+  <origin xyz="-2 2.6 0.1" rpy="0 0 -1.57"/>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+    <box size="0.1 0.1 0.1"/>
+      </geometry>
+      <material name="Red">
+         <color rgba="1.0 0.0 0.0 1.0"/>
+        </material>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  
+  </link>
+    <joint name="my_joint" type="fixed">
+    <origin xyz="-2 2.6 0.1" rpy="0 0 -1.57"/>
+
+   <parent link="race_track_link"/>
+   <child link="camera_finish"/>
+   
+   </joint>
+
+
+
+
+
+   <gazebo reference="camera_finish">
+    <sensor type="camera" name="camera1">
+      <update_rate>30.0</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>40</width>
+          <height>40</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>10</updateRate>
+        <cameraName>/race_track/finish_cam</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>camera_link</frameName>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+</robot>
